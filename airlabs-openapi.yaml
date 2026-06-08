@@ -1,0 +1,1671 @@
+openapi: 3.0.3
+info:
+  title: AirLabs Aviation Data API
+  description: Real-time global flight tracking, airport schedules, flight delays, airline and airport databases, aircraft
+    fleets, routes, nearby airports, and autocomplete suggestions. All responses are JSON wrapped in a `{request, response}`
+    envelope. Authentication via `api_key` query parameter.
+  version: v9
+  termsOfService: https://airlabs.co/terms
+  contact:
+    name: AirLabs
+    url: https://airlabs.co
+    email: info@airlabs.co
+  license:
+    name: Proprietary
+    url: https://airlabs.co/terms
+externalDocs:
+  description: Full documentation
+  url: https://airlabs.co/docs/
+servers:
+- url: https://airlabs.co/api/v9
+  description: Production
+security:
+- ApiKeyAuth: []
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: query
+      name: api_key
+      description: API key. Sign up at https://airlabs.co/signup
+  parameters:
+    FieldsParam:
+      name: _fields
+      in: query
+      required: false
+      description: Comma-separated list of response fields to return
+      schema:
+        type: string
+    LimitParam:
+      name: _limit
+      in: query
+      required: false
+      description: Maximum number of results to return
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 1000
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+              description: Error description
+            code:
+              type: string
+              description: Error code
+    RequestMeta:
+      type: object
+      description: Echo of the request and processing metadata
+      properties:
+        lang:
+          type: string
+        currency:
+          type: string
+        time:
+          type: number
+        id:
+          type: string
+        server:
+          type: string
+        host:
+          type: string
+        pid:
+          type: integer
+        version:
+          type: integer
+        method:
+          type: string
+        params:
+          type: object
+          additionalProperties: true
+    Flight:
+      type: object
+      properties:
+        hex:
+          type: string
+          description: ICAO 24-bit address (hex)
+        reg_number:
+          type: string
+          description: Aircraft registration number
+        flag:
+          type: string
+          description: Country ISO 2 code
+        lat:
+          type: number
+          format: float
+          description: Latitude in decimal degrees
+        lng:
+          type: number
+          format: float
+          description: Longitude in decimal degrees
+        alt:
+          type: integer
+          description: Altitude in meters
+        dir:
+          type: number
+          format: float
+          description: Direction / heading in degrees (0-360)
+        speed:
+          type: integer
+          description: Horizontal speed in km/h
+        v_speed:
+          type: number
+          format: float
+          description: Vertical speed in m/s
+        squawk:
+          type: string
+          description: Transponder squawk code
+        flight_number:
+          type: string
+          description: Flight number
+        flight_iata:
+          type: string
+          description: Flight IATA code
+        flight_icao:
+          type: string
+          description: Flight ICAO code
+        dep_iata:
+          type: string
+          description: Departure airport IATA code
+        dep_icao:
+          type: string
+          description: Departure airport ICAO code
+        arr_iata:
+          type: string
+          description: Arrival airport IATA code
+        arr_icao:
+          type: string
+          description: Arrival airport ICAO code
+        airline_iata:
+          type: string
+          description: Airline IATA code
+        airline_icao:
+          type: string
+          description: Airline ICAO code
+        aircraft_icao:
+          type: string
+          description: Aircraft ICAO type code
+        updated:
+          type: integer
+          description: Last update Unix timestamp
+        status:
+          type: string
+          description: Flight status (en-route, landed, scheduled, cancelled, etc.)
+    FlightDetail:
+      type: object
+      properties:
+        hex:
+          type: string
+          description: ICAO 24-bit address (hex)
+        reg_number:
+          type: string
+          description: Aircraft registration number
+        flag:
+          type: string
+          description: Country ISO 2 code
+        lat:
+          type: number
+          format: float
+          description: Latitude in decimal degrees
+        lng:
+          type: number
+          format: float
+          description: Longitude in decimal degrees
+        alt:
+          type: integer
+          description: Altitude in meters
+        dir:
+          type: number
+          format: float
+          description: Direction / heading in degrees (0-360)
+        speed:
+          type: integer
+          description: Horizontal speed in km/h
+        v_speed:
+          type: number
+          format: float
+          description: Vertical speed in m/s
+        squawk:
+          type: string
+          description: Transponder squawk code
+        flight_number:
+          type: string
+          description: Flight number
+        flight_iata:
+          type: string
+          description: Flight IATA code
+        flight_icao:
+          type: string
+          description: Flight ICAO code
+        dep_iata:
+          type: string
+          description: Departure airport IATA code
+        dep_icao:
+          type: string
+          description: Departure airport ICAO code
+        arr_iata:
+          type: string
+          description: Arrival airport IATA code
+        arr_icao:
+          type: string
+          description: Arrival airport ICAO code
+        airline_iata:
+          type: string
+          description: Airline IATA code
+        airline_icao:
+          type: string
+          description: Airline ICAO code
+        aircraft_icao:
+          type: string
+          description: Aircraft ICAO type code
+        updated:
+          type: integer
+          description: Last update Unix timestamp
+        status:
+          type: string
+          description: Flight status (en-route, landed, scheduled, cancelled, etc.)
+        dep_terminal:
+          type: string
+          description: Departure terminal
+        dep_gate:
+          type: string
+          description: Departure gate
+        dep_time:
+          type: string
+          description: Scheduled departure time (local)
+        dep_time_utc:
+          type: string
+          description: Scheduled departure time (UTC)
+        dep_estimated:
+          type: string
+          description: Estimated departure time (local)
+        dep_estimated_utc:
+          type: string
+          description: Estimated departure time (UTC)
+        dep_actual:
+          type: string
+          description: Actual departure time (local)
+        dep_actual_utc:
+          type: string
+          description: Actual departure time (UTC)
+        arr_terminal:
+          type: string
+          description: Arrival terminal
+        arr_gate:
+          type: string
+          description: Arrival gate
+        arr_baggage:
+          type: string
+          description: Baggage belt / carousel
+        arr_time:
+          type: string
+          description: Scheduled arrival time (local)
+        arr_time_utc:
+          type: string
+          description: Scheduled arrival time (UTC)
+        arr_estimated:
+          type: string
+          description: Estimated arrival time (local)
+        arr_estimated_utc:
+          type: string
+          description: Estimated arrival time (UTC)
+        arr_actual:
+          type: string
+          description: Actual arrival time (local)
+        arr_actual_utc:
+          type: string
+          description: Actual arrival time (UTC)
+        cs_airline_iata:
+          type: string
+          description: Codeshare airline IATA code
+        cs_flight_iata:
+          type: string
+          description: Codeshare flight IATA code
+        cs_flight_number:
+          type: string
+          description: Codeshare flight number
+        duration:
+          type: integer
+          description: Scheduled duration in minutes
+        delayed:
+          type: integer
+          description: Delay in minutes
+        dep_delayed:
+          type: integer
+          description: Departure delay in minutes
+        arr_delayed:
+          type: integer
+          description: Arrival delay in minutes
+    Schedule:
+      type: object
+      properties:
+        airline_iata:
+          type: string
+          description: Airline IATA code
+        airline_icao:
+          type: string
+          description: Airline ICAO code
+        flight_iata:
+          type: string
+          description: Flight IATA code
+        flight_icao:
+          type: string
+          description: Flight ICAO code
+        flight_number:
+          type: string
+          description: Flight number
+        dep_iata:
+          type: string
+          description: Departure airport IATA code
+        dep_icao:
+          type: string
+          description: Departure airport ICAO code
+        dep_terminal:
+          type: string
+          description: Departure terminal
+        dep_gate:
+          type: string
+          description: Departure gate
+        dep_time:
+          type: string
+          description: Scheduled departure time (local)
+        dep_time_utc:
+          type: string
+          description: Scheduled departure time (UTC)
+        dep_estimated:
+          type: string
+          description: Estimated departure time (local)
+        dep_estimated_utc:
+          type: string
+          description: Estimated departure time (UTC)
+        dep_actual:
+          type: string
+          description: Actual departure time (local)
+        dep_actual_utc:
+          type: string
+          description: Actual departure time (UTC)
+        arr_iata:
+          type: string
+          description: Arrival airport IATA code
+        arr_icao:
+          type: string
+          description: Arrival airport ICAO code
+        arr_terminal:
+          type: string
+          description: Arrival terminal
+        arr_gate:
+          type: string
+          description: Arrival gate
+        arr_baggage:
+          type: string
+          description: Baggage belt / carousel
+        arr_time:
+          type: string
+          description: Scheduled arrival time (local)
+        arr_time_utc:
+          type: string
+          description: Scheduled arrival time (UTC)
+        arr_estimated:
+          type: string
+          description: Estimated arrival time (local)
+        arr_estimated_utc:
+          type: string
+          description: Estimated arrival time (UTC)
+        arr_actual:
+          type: string
+          description: Actual arrival time (local)
+        arr_actual_utc:
+          type: string
+          description: Actual arrival time (UTC)
+        cs_airline_iata:
+          type: string
+          description: Codeshare airline IATA code
+        cs_flight_iata:
+          type: string
+          description: Codeshare flight IATA code
+        cs_flight_number:
+          type: string
+          description: Codeshare flight number
+        status:
+          type: string
+          description: Flight status
+        duration:
+          type: integer
+          description: Scheduled duration in minutes
+        delayed:
+          type: integer
+          description: Delay in minutes
+        dep_delayed:
+          type: integer
+          description: Departure delay in minutes
+        arr_delayed:
+          type: integer
+          description: Arrival delay in minutes
+    Delay:
+      type: object
+      properties:
+        airline_iata:
+          type: string
+          description: Airline IATA code
+        airline_icao:
+          type: string
+          description: Airline ICAO code
+        flight_iata:
+          type: string
+          description: Flight IATA code
+        flight_icao:
+          type: string
+          description: Flight ICAO code
+        flight_number:
+          type: string
+          description: Flight number
+        dep_iata:
+          type: string
+          description: Departure airport IATA code
+        dep_icao:
+          type: string
+          description: Departure airport ICAO code
+        dep_terminal:
+          type: string
+          description: Departure terminal
+        dep_gate:
+          type: string
+          description: Departure gate
+        dep_time:
+          type: string
+          description: Scheduled departure time (local)
+        dep_time_utc:
+          type: string
+          description: Scheduled departure time (UTC)
+        dep_estimated:
+          type: string
+          description: Estimated departure time (local)
+        dep_estimated_utc:
+          type: string
+          description: Estimated departure time (UTC)
+        dep_actual:
+          type: string
+          description: Actual departure time (local)
+        dep_actual_utc:
+          type: string
+          description: Actual departure time (UTC)
+        arr_iata:
+          type: string
+          description: Arrival airport IATA code
+        arr_icao:
+          type: string
+          description: Arrival airport ICAO code
+        arr_terminal:
+          type: string
+          description: Arrival terminal
+        arr_gate:
+          type: string
+          description: Arrival gate
+        arr_baggage:
+          type: string
+          description: Baggage belt / carousel
+        arr_time:
+          type: string
+          description: Scheduled arrival time (local)
+        arr_time_utc:
+          type: string
+          description: Scheduled arrival time (UTC)
+        arr_estimated:
+          type: string
+          description: Estimated arrival time (local)
+        arr_estimated_utc:
+          type: string
+          description: Estimated arrival time (UTC)
+        arr_actual:
+          type: string
+          description: Actual arrival time (local)
+        arr_actual_utc:
+          type: string
+          description: Actual arrival time (UTC)
+        cs_airline_iata:
+          type: string
+          description: Codeshare airline IATA code
+        cs_flight_iata:
+          type: string
+          description: Codeshare flight IATA code
+        cs_flight_number:
+          type: string
+          description: Codeshare flight number
+        status:
+          type: string
+          description: Flight status
+        duration:
+          type: integer
+          description: Scheduled duration in minutes
+        delayed:
+          type: integer
+          description: Delay in minutes
+        dep_delayed:
+          type: integer
+          description: Departure delay in minutes
+        arr_delayed:
+          type: integer
+          description: Arrival delay in minutes
+    Airport:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Airport name
+        iata_code:
+          type: string
+          description: Airport IATA code
+        icao_code:
+          type: string
+          description: Airport ICAO code
+        lat:
+          type: number
+          format: float
+          description: Latitude in decimal degrees
+        lng:
+          type: number
+          format: float
+          description: Longitude in decimal degrees
+        alt:
+          type: integer
+          description: Elevation in meters
+        city:
+          type: string
+          description: City name
+        city_code:
+          type: string
+          description: City IATA code
+        un_locode:
+          type: string
+          description: UN/LOCODE
+        timezone:
+          type: string
+          description: Timezone (tz database name)
+        country_code:
+          type: string
+          description: Country ISO 2 code
+        phone:
+          type: string
+          description: Airport phone number
+        website:
+          type: string
+          description: Airport website URL
+        popularity:
+          type: integer
+          description: Popularity rank
+        is_major:
+          type: boolean
+          description: Whether this is a major airport
+        slug:
+          type: string
+          description: URL-friendly slug
+    NearbyAirport:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Airport name
+        iata_code:
+          type: string
+          description: Airport IATA code
+        icao_code:
+          type: string
+          description: Airport ICAO code
+        lat:
+          type: number
+          format: float
+          description: Airport latitude
+        lng:
+          type: number
+          format: float
+          description: Airport longitude
+        alt:
+          type: integer
+          description: Airport elevation in meters
+        city:
+          type: string
+          description: City name
+        city_code:
+          type: string
+          description: City IATA code
+        country_code:
+          type: string
+          description: Country ISO 2 code
+        country:
+          type: string
+          description: Country name
+        timezone:
+          type: string
+          description: Timezone (tz database name)
+        distance:
+          type: number
+          format: float
+          description: Distance from provided coordinates (km)
+    City:
+      type: object
+      properties:
+        name:
+          type: string
+          description: City name
+        city_code:
+          type: string
+          description: City IATA code
+        lat:
+          type: number
+          format: float
+          description: Latitude in decimal degrees
+        lng:
+          type: number
+          format: float
+          description: Longitude in decimal degrees
+        country_code:
+          type: string
+          description: Country ISO 2 code
+        timezone:
+          type: string
+          description: Timezone (tz database name)
+        un_locode:
+          type: string
+          description: UN/LOCODE
+        popularity:
+          type: integer
+          description: Popularity rank
+    Airline:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Airline name
+        iata_code:
+          type: string
+          description: Airline IATA code
+        icao_code:
+          type: string
+          description: Airline ICAO code
+        iata_prefix:
+          type: string
+          description: IATA accounting prefix
+        iata_accounting:
+          type: string
+          description: IATA accounting code
+        callsign:
+          type: string
+          description: Airline callsign
+        country_code:
+          type: string
+          description: Country ISO 2 code
+        hub_code:
+          type: string
+          description: Main hub airport IATA code
+        fleet_size:
+          type: integer
+          description: Total fleet size
+        fleet_average_age:
+          type: number
+          format: float
+          description: Average fleet age in years
+        date_founded:
+          type: string
+          description: Year founded
+        date_active:
+          type: string
+          description: Date airline became active
+        status:
+          type: string
+          description: Airline status
+        type:
+          type: string
+          description: Airline type (scheduled, charter, cargo)
+    FleetAircraft:
+      type: object
+      properties:
+        hex:
+          type: string
+          description: ICAO 24-bit address (hex)
+        reg_number:
+          type: string
+          description: Aircraft registration number
+        flag:
+          type: string
+          description: Country ISO 2 code
+        airline_iata:
+          type: string
+          description: Airline IATA code
+        airline_icao:
+          type: string
+          description: Airline ICAO code
+        aircraft_iata:
+          type: string
+          description: Aircraft IATA type code
+        aircraft_icao:
+          type: string
+          description: Aircraft ICAO type code
+        model:
+          type: string
+          description: Aircraft model name
+        manufacturer:
+          type: string
+          description: Aircraft manufacturer
+        built_year:
+          type: integer
+          description: Year of manufacture
+        first_flight_date:
+          type: string
+          description: Date of first flight (YYYY-MM-DD)
+        engines_count:
+          type: integer
+          description: Number of engines
+        engines_type:
+          type: string
+          description: Engine type (jet, turboprop, piston)
+        plane_age:
+          type: number
+          format: float
+          description: Aircraft age in years
+        plane_owner:
+          type: string
+          description: Aircraft owner
+        plane_status:
+          type: string
+          description: Aircraft status (active, stored, etc.)
+        msn:
+          type: string
+          description: Manufacturer serial number
+        line_number:
+          type: string
+          description: Production line number
+        num_seats:
+          type: integer
+          description: Number of seats
+        rollout_date:
+          type: string
+          description: Rollout date (YYYY-MM-DD)
+        delivery_date:
+          type: string
+          description: Delivery date (YYYY-MM-DD)
+    Route:
+      type: object
+      properties:
+        airline_iata:
+          type: string
+          description: Airline IATA code
+        airline_icao:
+          type: string
+          description: Airline ICAO code
+        flight_number:
+          type: string
+          description: Flight number
+        flight_iata:
+          type: string
+          description: Flight IATA code
+        flight_icao:
+          type: string
+          description: Flight ICAO code
+        dep_iata:
+          type: string
+          description: Departure airport IATA code
+        dep_icao:
+          type: string
+          description: Departure airport ICAO code
+        dep_terminal:
+          type: string
+          description: Departure terminal
+        dep_time:
+          type: string
+          description: Scheduled departure time (local)
+        dep_time_utc:
+          type: string
+          description: Scheduled departure time (UTC)
+        arr_iata:
+          type: string
+          description: Arrival airport IATA code
+        arr_icao:
+          type: string
+          description: Arrival airport ICAO code
+        arr_terminal:
+          type: string
+          description: Arrival terminal
+        arr_time:
+          type: string
+          description: Scheduled arrival time (local)
+        arr_time_utc:
+          type: string
+          description: Scheduled arrival time (UTC)
+        duration:
+          type: integer
+          description: Flight duration in minutes
+        days:
+          type: array
+          description: Days of week the route operates
+          items:
+            type: string
+        cs_airline_iata:
+          type: string
+          description: Codeshare airline IATA code
+        cs_flight_number:
+          type: string
+          description: Codeshare flight number
+        cs_flight_iata:
+          type: string
+          description: Codeshare flight IATA code
+    SuggestResponse:
+      type: object
+      description: Grouped suggestion results
+      properties:
+        airports:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                description: Airport name
+              iata_code:
+                type: string
+                description: Airport IATA code
+              icao_code:
+                type: string
+                description: Airport ICAO code
+              city:
+                type: string
+                description: City name
+              city_code:
+                type: string
+                description: City IATA code
+              country_code:
+                type: string
+                description: Country ISO 2 code
+              country:
+                type: string
+                description: Country name
+              lat:
+                type: number
+                format: float
+                description: Latitude
+              lng:
+                type: number
+                format: float
+                description: Longitude
+        cities:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                description: City name
+              city_code:
+                type: string
+                description: City IATA code
+              country_code:
+                type: string
+                description: Country ISO 2 code
+              country:
+                type: string
+                description: Country name
+              lat:
+                type: number
+                format: float
+                description: Latitude
+              lng:
+                type: number
+                format: float
+                description: Longitude
+        airlines:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                description: Airline name
+              iata_code:
+                type: string
+                description: Airline IATA code
+              icao_code:
+                type: string
+                description: Airline ICAO code
+    FlightsResponse:
+      type: object
+      properties:
+        request:
+          $ref: '#/components/schemas/RequestMeta'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/Flight'
+    SchedulesResponse:
+      type: object
+      properties:
+        request:
+          $ref: '#/components/schemas/RequestMeta'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/Schedule'
+    DelaysResponse:
+      type: object
+      properties:
+        request:
+          $ref: '#/components/schemas/RequestMeta'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/Delay'
+    FlightResponse:
+      type: object
+      properties:
+        request:
+          $ref: '#/components/schemas/RequestMeta'
+        response:
+          $ref: '#/components/schemas/FlightDetail'
+    NearbyResponse:
+      type: object
+      properties:
+        request:
+          $ref: '#/components/schemas/RequestMeta'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/NearbyAirport'
+    SuggestEnvelope:
+      type: object
+      properties:
+        request:
+          $ref: '#/components/schemas/RequestMeta'
+        response:
+          $ref: '#/components/schemas/SuggestResponse'
+    AirlinesResponse:
+      type: object
+      properties:
+        request:
+          $ref: '#/components/schemas/RequestMeta'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/Airline'
+    AirportsResponse:
+      type: object
+      properties:
+        request:
+          $ref: '#/components/schemas/RequestMeta'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/Airport'
+    CitiesResponse:
+      type: object
+      properties:
+        request:
+          $ref: '#/components/schemas/RequestMeta'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/City'
+    FleetsResponse:
+      type: object
+      properties:
+        request:
+          $ref: '#/components/schemas/RequestMeta'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/FleetAircraft'
+    RoutesResponse:
+      type: object
+      properties:
+        request:
+          $ref: '#/components/schemas/RequestMeta'
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/Route'
+paths:
+  /flights:
+    get:
+      summary: Real-time flights
+      description: Returns real-time positions and status of flights worldwide. Optional filters narrow the result set.
+      tags:
+      - Flights
+      operationId: flights_flights
+      parameters:
+      - name: flight_iata
+        in: query
+        required: false
+        description: Flight IATA code (e.g. AA100)
+        schema:
+          type: string
+      - name: flight_icao
+        in: query
+        required: false
+        description: Flight ICAO code (e.g. AAL100)
+        schema:
+          type: string
+      - name: airline_iata
+        in: query
+        required: false
+        description: Airline IATA code
+        schema:
+          type: string
+      - name: airline_icao
+        in: query
+        required: false
+        description: Airline ICAO code
+        schema:
+          type: string
+      - name: dep_iata
+        in: query
+        required: false
+        description: Departure airport IATA code
+        schema:
+          type: string
+      - name: dep_icao
+        in: query
+        required: false
+        description: Departure airport ICAO code
+        schema:
+          type: string
+      - name: arr_iata
+        in: query
+        required: false
+        description: Arrival airport IATA code
+        schema:
+          type: string
+      - name: arr_icao
+        in: query
+        required: false
+        description: Arrival airport ICAO code
+        schema:
+          type: string
+      - name: flag
+        in: query
+        required: false
+        description: Country ISO 2 code
+        schema:
+          type: string
+      - name: hex
+        in: query
+        required: false
+        description: ICAO 24-bit address (hex)
+        schema:
+          type: string
+      - name: reg_number
+        in: query
+        required: false
+        description: Aircraft registration number
+        schema:
+          type: string
+      - $ref: '#/components/parameters/FieldsParam'
+      - $ref: '#/components/parameters/LimitParam'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FlightsResponse'
+        '400': &id001
+          description: Bad request — missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401': &id002
+          description: Unauthorized — missing or invalid API key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403': &id003
+          description: Forbidden — plan limit reached or feature not available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429': &id004
+          description: Too many requests — rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500': &id005
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /schedules:
+    get:
+      summary: Airport schedules
+      description: Airport timetable — departures and arrivals. At least one of dep_iata, dep_icao, arr_iata, arr_icao is
+        required.
+      tags:
+      - Schedules
+      operationId: schedules_schedules
+      parameters:
+      - name: dep_iata
+        in: query
+        required: false
+        description: Departure airport IATA
+        schema:
+          type: string
+      - name: dep_icao
+        in: query
+        required: false
+        description: Departure airport ICAO
+        schema:
+          type: string
+      - name: arr_iata
+        in: query
+        required: false
+        description: Arrival airport IATA
+        schema:
+          type: string
+      - name: arr_icao
+        in: query
+        required: false
+        description: Arrival airport ICAO
+        schema:
+          type: string
+      - name: airline_iata
+        in: query
+        required: false
+        description: Airline IATA
+        schema:
+          type: string
+      - name: airline_icao
+        in: query
+        required: false
+        description: Airline ICAO
+        schema:
+          type: string
+      - name: flight_iata
+        in: query
+        required: false
+        description: Flight IATA
+        schema:
+          type: string
+      - name: flight_icao
+        in: query
+        required: false
+        description: Flight ICAO
+        schema:
+          type: string
+      - name: flight_number
+        in: query
+        required: false
+        description: Flight number
+        schema:
+          type: string
+      - $ref: '#/components/parameters/FieldsParam'
+      - $ref: '#/components/parameters/LimitParam'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchedulesResponse'
+        '400': *id001
+        '401': *id002
+        '403': *id003
+        '429': *id004
+        '500': *id005
+  /delays:
+    get:
+      summary: Delayed flights
+      description: Returns currently delayed flights with optional filters.
+      tags:
+      - Delays
+      operationId: delays_delays
+      parameters:
+      - name: dep_iata
+        in: query
+        required: false
+        description: Departure airport IATA
+        schema:
+          type: string
+      - name: dep_icao
+        in: query
+        required: false
+        description: Departure airport ICAO
+        schema:
+          type: string
+      - name: arr_iata
+        in: query
+        required: false
+        description: Arrival airport IATA
+        schema:
+          type: string
+      - name: arr_icao
+        in: query
+        required: false
+        description: Arrival airport ICAO
+        schema:
+          type: string
+      - name: airline_iata
+        in: query
+        required: false
+        description: Airline IATA
+        schema:
+          type: string
+      - name: airline_icao
+        in: query
+        required: false
+        description: Airline ICAO
+        schema:
+          type: string
+      - name: type
+        in: query
+        required: false
+        description: 'Filter: departures or arrivals'
+        schema:
+          type: string
+          enum:
+          - departures
+          - arrivals
+      - name: delay
+        in: query
+        required: false
+        description: Minimum delay in minutes
+        schema:
+          type: integer
+      - $ref: '#/components/parameters/FieldsParam'
+      - $ref: '#/components/parameters/LimitParam'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DelaysResponse'
+        '400': *id001
+        '401': *id002
+        '403': *id003
+        '429': *id004
+        '500': *id005
+  /flight:
+    get:
+      summary: Single flight info
+      description: Returns detailed information about a single flight. One of flight_iata or flight_icao is required.
+      tags:
+      - Flight
+      operationId: flight_flight
+      parameters:
+      - name: flight_iata
+        in: query
+        required: false
+        description: Flight IATA code
+        schema:
+          type: string
+      - name: flight_icao
+        in: query
+        required: false
+        description: Flight ICAO code
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FlightResponse'
+        '400': *id001
+        '401': *id002
+        '403': *id003
+        '429': *id004
+        '500': *id005
+  /alert:
+    get:
+      summary: Flight alert
+      description: Returns flight details suitable for monitoring status changes, delays, gate changes. Response shape identical
+        to /flight.
+      tags:
+      - Alert
+      operationId: alert_flight
+      parameters:
+      - name: flight_iata
+        in: query
+        required: false
+        description: Flight IATA code
+        schema:
+          type: string
+      - name: flight_icao
+        in: query
+        required: false
+        description: Flight ICAO code
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FlightResponse'
+        '400': *id001
+        '401': *id002
+        '403': *id003
+        '429': *id004
+        '500': *id005
+  /nearby:
+    get:
+      summary: Nearby airports
+      description: Returns airports near the specified coordinates.
+      tags:
+      - Nearby
+      operationId: nearby_nearby
+      parameters:
+      - name: lat
+        in: query
+        required: true
+        description: Latitude in decimal degrees
+        schema:
+          type: number
+          format: float
+      - name: lng
+        in: query
+        required: true
+        description: Longitude in decimal degrees
+        schema:
+          type: number
+          format: float
+      - name: distance
+        in: query
+        required: false
+        description: Radius distance in km (default 100)
+        schema:
+          type: integer
+      - $ref: '#/components/parameters/FieldsParam'
+      - $ref: '#/components/parameters/LimitParam'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NearbyResponse'
+        '400': *id001
+        '401': *id002
+        '403': *id003
+        '429': *id004
+        '500': *id005
+  /suggest:
+    get:
+      summary: Autocomplete / search suggestions
+      description: Returns matching airports, cities, and airlines for a search query. Minimum query length is 2 characters.
+      tags:
+      - Suggest
+      operationId: suggest_suggestenvelope
+      parameters:
+      - name: search
+        in: query
+        required: true
+        description: Search query (min 2 chars)
+        schema:
+          type: string
+      - $ref: '#/components/parameters/FieldsParam'
+      - $ref: '#/components/parameters/LimitParam'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuggestEnvelope'
+        '400': *id001
+        '401': *id002
+        '403': *id003
+        '429': *id004
+        '500': *id005
+  /airlines:
+    get:
+      summary: Airlines database
+      description: Returns airlines from the database.
+      tags:
+      - Airlines
+      operationId: airlines_airlines
+      parameters:
+      - name: iata_code
+        in: query
+        required: false
+        description: Airline IATA code
+        schema:
+          type: string
+      - name: icao_code
+        in: query
+        required: false
+        description: Airline ICAO code
+        schema:
+          type: string
+      - name: airline_iata
+        in: query
+        required: false
+        description: Alias for iata_code
+        schema:
+          type: string
+      - name: airline_icao
+        in: query
+        required: false
+        description: Alias for icao_code
+        schema:
+          type: string
+      - $ref: '#/components/parameters/FieldsParam'
+      - $ref: '#/components/parameters/LimitParam'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AirlinesResponse'
+        '400': *id001
+        '401': *id002
+        '403': *id003
+        '429': *id004
+        '500': *id005
+  /airports:
+    get:
+      summary: Airports database
+      description: Returns airports from the database.
+      tags:
+      - Airports
+      operationId: airports_airports
+      parameters:
+      - name: iata_code
+        in: query
+        required: false
+        description: Airport IATA code
+        schema:
+          type: string
+      - name: icao_code
+        in: query
+        required: false
+        description: Airport ICAO code
+        schema:
+          type: string
+      - name: airport_iata
+        in: query
+        required: false
+        description: Alias for iata_code
+        schema:
+          type: string
+      - name: airport_icao
+        in: query
+        required: false
+        description: Alias for icao_code
+        schema:
+          type: string
+      - name: city_code
+        in: query
+        required: false
+        description: City IATA code
+        schema:
+          type: string
+      - name: country_code
+        in: query
+        required: false
+        description: Country ISO 2 code
+        schema:
+          type: string
+      - $ref: '#/components/parameters/FieldsParam'
+      - $ref: '#/components/parameters/LimitParam'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AirportsResponse'
+        '400': *id001
+        '401': *id002
+        '403': *id003
+        '429': *id004
+        '500': *id005
+  /cities:
+    get:
+      summary: Cities database
+      description: Returns cities from the database.
+      tags:
+      - Cities
+      operationId: cities_cities
+      parameters:
+      - name: city_code
+        in: query
+        required: false
+        description: City IATA code
+        schema:
+          type: string
+      - name: country_code
+        in: query
+        required: false
+        description: Country ISO 2 code
+        schema:
+          type: string
+      - $ref: '#/components/parameters/FieldsParam'
+      - $ref: '#/components/parameters/LimitParam'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CitiesResponse'
+        '400': *id001
+        '401': *id002
+        '403': *id003
+        '429': *id004
+        '500': *id005
+  /fleets:
+    get:
+      summary: Aircraft fleets database
+      description: Returns aircraft from the fleets database. At least one filter parameter is recommended.
+      tags:
+      - Fleets
+      operationId: fleets_fleets
+      parameters:
+      - name: airline_iata
+        in: query
+        required: false
+        description: Airline IATA code
+        schema:
+          type: string
+      - name: airline_icao
+        in: query
+        required: false
+        description: Airline ICAO code
+        schema:
+          type: string
+      - name: reg_number
+        in: query
+        required: false
+        description: Aircraft registration number
+        schema:
+          type: string
+      - name: hex
+        in: query
+        required: false
+        description: ICAO 24-bit address (hex)
+        schema:
+          type: string
+      - name: flag
+        in: query
+        required: false
+        description: Country ISO 2 code
+        schema:
+          type: string
+      - $ref: '#/components/parameters/FieldsParam'
+      - $ref: '#/components/parameters/LimitParam'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FleetsResponse'
+        '400': *id001
+        '401': *id002
+        '403': *id003
+        '429': *id004
+        '500': *id005
+  /routes:
+    get:
+      summary: Flight routes database
+      description: Returns routes from the routes database. At least one filter parameter is recommended.
+      tags:
+      - Routes
+      operationId: routes_routes
+      parameters:
+      - name: dep_iata
+        in: query
+        required: false
+        description: Departure airport IATA
+        schema:
+          type: string
+      - name: dep_icao
+        in: query
+        required: false
+        description: Departure airport ICAO
+        schema:
+          type: string
+      - name: arr_iata
+        in: query
+        required: false
+        description: Arrival airport IATA
+        schema:
+          type: string
+      - name: arr_icao
+        in: query
+        required: false
+        description: Arrival airport ICAO
+        schema:
+          type: string
+      - name: airline_iata
+        in: query
+        required: false
+        description: Airline IATA
+        schema:
+          type: string
+      - name: airline_icao
+        in: query
+        required: false
+        description: Airline ICAO
+        schema:
+          type: string
+      - name: flight_iata
+        in: query
+        required: false
+        description: Flight IATA
+        schema:
+          type: string
+      - name: flight_icao
+        in: query
+        required: false
+        description: Flight ICAO
+        schema:
+          type: string
+      - $ref: '#/components/parameters/FieldsParam'
+      - $ref: '#/components/parameters/LimitParam'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoutesResponse'
+        '400': *id001
+        '401': *id002
+        '403': *id003
+        '429': *id004
+        '500': *id005
+tags:
+- name: Flights
+  description: Real-time flight positions
+- name: Schedules
+  description: Airport departures and arrivals
+- name: Delays
+  description: Currently delayed flights
+- name: Flight
+  description: Single flight information
+- name: Alert
+  description: Flight monitoring
+- name: Nearby
+  description: Geographic airport lookup
+- name: Suggest
+  description: Autocomplete and search
+- name: Airlines
+  description: Airline reference data
+- name: Airports
+  description: Airport reference data
+- name: Cities
+  description: City reference data
+- name: Fleets
+  description: Aircraft fleet records
+- name: Routes
+  description: Route reference data
